@@ -420,10 +420,6 @@ accidentByAgeAndGender =
     finalRoadData |>    
     finalRoadData -> combine(groupby(finalRoadData,[:AgeGroup,:Gender]),:AgeGroup .=> length => :accidentsByAgeGender) 
 
-# accidentByAgeAndGender[!,:inPercentageAG]  = accidentByAgeAndGender[:,:accidentsByAgeGender] ./sum(accidentByAgeAndGender[:,:accidentsByAgeGender]) .* 100.0
-# relativeRiskData = outerjoin(accidentByAgeAndGender,accidentByGender,on = :Gender)
-# relativeRiskData[!,:relativeRisk] = relativeRiskData[:,:accidentsByGender] ./relativeRiskData[:,:accidentsByAgeGender] 
-
 accidentByAgeAndGender |>
     @vlplot(
         :line,
@@ -493,6 +489,7 @@ regressionData =
     finalRoadData -> select(finalRoadData,[:Time,:County,:AgeGroup,:Gender]) |>
     finalRoadData -> transform(finalRoadData,:Time =>  ByRow(hour),renamecols = false) 
 
+#Convert string categorical data into numeric categorical data
 function ConvertData(data::DataFrame,ColName::String)      
     index = findfirst(names(data) .== ColName)
  
@@ -541,13 +538,11 @@ bic(gm18)
 coef(gm18)[1:4]
 
 
-toTimeSeriesData = 
-     finalRoadData|>
-     finalRoadData -> combine(groupby(finalRoadData,[:Date]),:Date .=> length => :noOfAccidents) 
+# toTimeSeriesData = 
+#      finalRoadData|>
+#      finalRoadData -> combine(groupby(finalRoadData,[:Date]),:Date .=> length => :noOfAccidents) 
 
-toTimeSeriesData[!,:noOfAccidents] = Float64.(toTimeSeriesData[:,:noOfAccidents])
-
-#CSV.write("D://Projects//Machine Learning Exploration//Analytics and MachineLearning//toTimeSeriesData.csv",toTimeSeriesData)
+# toTimeSeriesData[!,:noOfAccidents] = Float64.(toTimeSeriesData[:,:noOfAccidents])
 
 
 
